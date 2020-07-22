@@ -1,0 +1,40 @@
+sudo: false
+dist: trusty
+
+language: python
+matrix:
+  include:
+    - python: '2.7'
+    - python: '3.3'
+    - python: '3.4'
+    - python: '3.5'
+    - python: '3.6'
+    - python: '3.7'
+      dist: xenial
+    - python: 'pypy'
+    - python: 'pypy3'
+
+install:
+  - pip install -r requirements.txt
+  - pip install -r requirements-dev.txt
+
+script:
+  - flake8 setup.py test.py genderize
+  - nosetests --with-coverage --cover-package genderize
+
+deploy:
+  provider: pypi
+  user: SteelPangolin
+  password:
+    secure: ESeqX6NhNQmNUOFwy5YS3JyZIQqL83zKTd69boBinjnOP8VfL/STfwN0/ZXTQE5+agJDoKN3jlLTbxYi8bgyp8GwD3P8nylg0Lx8VbjemOQcpSQ9zeRpIKGvz9EG50nWR+7vGJQIKsb5hWJDNtcPnYIDY/2tr/kFUzCG3jz6a0Y=
+  on:
+    python: '3.7'
+    tags: true
+    repo: SteelPangolin/genderize
+  distributions: "sdist bdist_wheel"
+  skip_existing: true
+  skip_cleanup: true
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+  - curl -X POST https://readthedocs.org/build/genderize
